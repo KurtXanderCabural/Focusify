@@ -2,11 +2,11 @@
 
 import React, {
   createContext,
-  ReactNode,
   useCallback,
   useContext,
   useEffect,
   useState,
+  type ReactNode,
 } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { getUserCookie, setUserCookie, removeUserCookie } from "@/lib/cookies";
@@ -76,7 +76,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       localStorage.removeItem("user");
     } catch {
-      // ignore
+      // ignore (SSR / privacy mode)
     }
   }, []);
 
@@ -86,6 +86,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     await setUserCookie(newUser);
   }, []);
 
+  // Load user from cookie on mount
   useEffect(() => {
     const updateUser = async () => {
       const cookiesUser = await getUserCookie();
@@ -102,8 +103,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     updateUser();
   }, [onLogout]);
 
+  // Redirect protection
   useEffect(() => {
-    if (!isLoading && !user.isAuthenticated && ["/main", "/profile"].includes(pathName)) {
+    if (
+      !isLoading &&
+      !user.isAuthenticated &&
+      ["/main", "/profile"].includes(pathName)
+    ) {
       push("/");
     }
   }, [user.isAuthenticated, isLoading, pathName, push]);
@@ -115,10 +121,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
 export default function useAuth(): AuthContextType {
   const context = useContext(AuthContext);
-
   if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
-
   return context;
 }
