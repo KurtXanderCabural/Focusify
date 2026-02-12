@@ -1,7 +1,6 @@
 "use client";
 
 import GoogleIcon from "../components/ui/Google";
-import { TextField } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -17,23 +16,19 @@ const Register = () => {
     register,
     handleSubmit,
     formState: { errors },
-    setError,
   } = useForm<FormData>({
     resolver: zodResolver(UserSchema),
   });
 
   const [errorMessage, setErrorMessage] = useState<string>("");
-
-  const styleInput = "text-[14px] rounded-[10px] py-[12px] px-[11px] w-[300px]";
+  const styleInput = "text-[14px] rounded-[10px] py-[12px] px-[11px] w-full";
 
   const onSubmit = async (data: FormData) => {
     const response = await fetch(
       "https://focusify.onrender.com/api/v1/auth/register",
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           username: data.email,
           password: data.password,
@@ -47,29 +42,27 @@ const Register = () => {
       alert("Account Created Successfully!");
       push("/login");
     } else {
-      const responseData = await response.json();
+      await response.json();
       setErrorMessage("Username Already Exists");
-      console.log("Error:", responseData.message);
     }
   };
 
   return (
-    <div className="w-full h-screen flex justify-center items-center">
-      <div className="w-[420px]  rounded-[15px] shadow-2xl text-center">
-        <div className="flex justify-center">
-          <button className="flex justify-center items-center h-[40px] w-[350px] border-[1px] rounded-[15px] mt-[50px] mb-[25px] py-[25px] font-bold border-black">
-            <div className="w-[25px] h-[25px] mr-[10px]">
-              <GoogleIcon />
-            </div>
-            Continue With Google
-          </button>
-        </div>
-        <h1 className="text-[12px] mb-[25px]">OR</h1>
-
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col text-center items-center space-y-[10px]"
+    <div className="min-h-screen w-full px-4 py-10 flex items-center justify-center">
+      <div className="w-full max-w-md rounded-2xl shadow-2xl bg-white text-center p-6 sm:p-8">
+        <button
+          type="button"
+          className="flex w-full items-center justify-center gap-3 rounded-2xl border border-black py-3 font-bold"
         >
+          <span className="h-6 w-6">
+            <GoogleIcon />
+          </span>
+          Continue With Google
+        </button>
+
+        <h1 className="mt-4 text-xs text-black/70">OR</h1>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-4 flex flex-col items-center gap-3">
           <FormField
             type="email"
             placeholder="Email"
@@ -78,15 +71,16 @@ const Register = () => {
             error={errors.email}
             className={styleInput}
           />
+
           {errorMessage && (
-            <div className="text-red-500 mt-2">
+            <div className="w-full text-left text-red-500 text-sm">
               <p>{errorMessage}</p>
             </div>
           )}
 
           <FormField
             type="text"
-            placeholder="FirstName"
+            placeholder="First Name"
             name="firstName"
             register={register}
             error={errors.firstName}
@@ -120,24 +114,22 @@ const Register = () => {
             className={styleInput}
           />
 
-          <div className="flex justify-center">
-            <button
-              className="mt-[20px] flex justify-center items-center h-[40px] w-[350px] border-[1px] rounded-[15px]  bg-skyblue mb-[30px] py-[25px] text-white"
-              type="submit"
-            >
-              Create Account
-            </button>
-          </div>
+          <button
+            className="mt-2 flex w-full items-center justify-center rounded-2xl bg-skyblue py-3 text-white"
+            type="submit"
+          >
+            Create Account
+          </button>
         </form>
 
-        <div className="flex justify-center">
+        <div className="mt-4 flex items-center justify-center gap-2">
           <input type="checkbox" value="terms" name="terms" id="terms" />
-          <label htmlFor="terms" className="text-[12px] ml-[10px]">
+          <label htmlFor="terms" className="text-xs">
             I agree to the terms and conditions
           </label>
         </div>
 
-        <p className="text-[14px]">
+        <p className="mt-4 text-sm">
           Already have an account?{" "}
           <Link href="/login" className="text-skyblue">
             Log in

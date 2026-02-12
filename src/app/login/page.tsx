@@ -1,4 +1,5 @@
 "use client";
+
 import { TextField } from "@mui/material";
 import Link from "next/link";
 import { useState } from "react";
@@ -20,96 +21,79 @@ const Login = () => {
       "https://focusify.onrender.com/api/v1/auth/login",
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: username,
-          password: password,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
       }
     );
 
     const data = await response.json();
 
     if (response.status === 200) {
-      console.log("Success");
       localStorage.setItem("user", JSON.stringify(data));
       onLogin(data);
-      setTimeout(() => {
-        router.push("/main");
-      }, 100);
+      setTimeout(() => router.push("/main"), 100);
     } else {
       setErrorMessage("Invalid username or password. Please try again.");
-      console.log("Error");
     }
   };
 
   return (
-    <div className="w-full h-screen flex justify-center items-center">
-      <div className="w-[420px] h-[600px] rounded-[15px] shadow-2xl text-center">
-        <form onSubmit={handleLogin}>
-          <div className="flex justify-center">
-            <button className="flex justify-center items-center h-[40px] w-[350px] border-[1px] rounded-[15px] mt-[50px] mb-[50px] py-[25px] font-bold border-black">
-              <div className="w-[25px] h-[25px] mr-[10px]">
-                <GoogleIcon />
-              </div>
-              Continue With Google
-            </button>
-          </div>
-          <h1 className="text-[12px] mb-[40px]">OR</h1>
+    <div className="min-h-screen w-full px-4 py-10 flex items-center justify-center">
+      <div className="w-full max-w-md rounded-2xl shadow-2xl bg-white text-center p-6 sm:p-8">
+        <form onSubmit={handleLogin} className="space-y-4">
+          <button
+            type="button"
+            className="flex w-full items-center justify-center gap-3 rounded-2xl border border-black py-3 font-bold"
+          >
+            <span className="h-6 w-6">
+              <GoogleIcon />
+            </span>
+            Continue With Google
+          </button>
+
+          <h1 className="text-xs text-black/70">OR</h1>
+
           <TextField
             value={username}
             label="Username"
             id="username"
-            className="w-[350px] text-[12px]"
-            InputProps={{
-              style: { borderRadius: "15px" },
-            }}
+            className="w-full"
+            InputProps={{ style: { borderRadius: "15px" } }}
             onChange={(e) => setUsername(e.target.value)}
           />
-          <div className="mt-[25px]"></div>
+
           <TextField
             value={password}
             type="password"
             label="Password"
             id="password"
-            className="w-[350px] text-[12px]"
-            InputProps={{
-              style: { borderRadius: "15px" },
-            }}
+            className="w-full"
+            InputProps={{ style: { borderRadius: "15px" } }}
             onChange={(e) => setPassword(e.target.value)}
           />
 
           {errorMessage && (
-            <div className="text-red-500 mt-2">
+            <div className="text-red-500 text-sm">
               <p>{errorMessage}</p>
             </div>
           )}
 
-          <div className="flex justify-center mt-[50px]">
-            <input
-              type="checkbox"
-              value="remember"
-              name="remember"
-              id="remember"
-            />
-            <label htmlFor="remember" className="text-[12px] ml-[10px]">
+          <div className="flex items-center justify-center gap-2 pt-1">
+            <input type="checkbox" value="remember" name="remember" id="remember" />
+            <label htmlFor="remember" className="text-xs">
               Remember me
             </label>
           </div>
 
-          <div className="flex justify-center">
-            <button
-              className="flex items-center justify-center h-[40px] w-[350px] boarder-[1px] rounded-[15px] mt-[50px] bg-skyblue mb-[20px] py-[25px] text-white"
-              type="submit"
-            >
-              Sign in
-            </button>
-          </div>
+          <button
+            className="flex w-full items-center justify-center rounded-2xl bg-skyblue py-3 text-white"
+            type="submit"
+          >
+            Sign in
+          </button>
         </form>
 
-        <p className="text-[14px]">
+        <p className="mt-4 text-sm">
           Not a member?{" "}
           <Link href="/register" className="text-skyblue">
             Register Now
